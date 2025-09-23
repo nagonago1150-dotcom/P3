@@ -956,7 +956,7 @@ body::after {
     }
     
     #section3 .question-title {
-        transform: scale(0.9) translateX(-3em);
+        transform: scale(0.9) translateX(-2em);
         letter-spacing: 0.02em;
         text-align: center;
         margin: 0 auto 40px auto;
@@ -991,7 +991,7 @@ body::after {
     }
     
     #section3 .question-title {
-        transform: scale(0.87) translateX(-3em);
+        transform: scale(0.87) translateX(-2em);
         letter-spacing: 0.01em;
         text-align: center;
         margin: 0 auto 40px auto;
