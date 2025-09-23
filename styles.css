@@ -958,15 +958,17 @@ body::after {
     #section3 .question-title {
         transform: scale(0.9);
         letter-spacing: 0.02em;
+        text-align: center;
+        padding: 0 10px;
     }
-    
+
     #section2 .question-title {
         white-space: normal;
         transform: scale(1);
     }
-    
+
     .question-area {
-        padding: 30px 15px;
+        padding: 30px 25px;
     }
     
     .thank-you {
