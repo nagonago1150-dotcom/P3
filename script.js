@@ -2,8 +2,8 @@ let currentQuestion = 1;
 const answers = {};
 const redirectUrl = 'https://pthree.jp/lp?u=media8';
 
-// タイピングアニメーション関数（軽量実装）
-function typeWriter(element, text, speed = 50) {
+// タイピングアニメーション関数（強化版 - 各文字にエフェクト）
+function typeWriter(element, text, speed = 40) {
     // prefers-reduced-motionチェック
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         element.innerHTML = text;
@@ -23,7 +23,12 @@ function typeWriter(element, text, speed = 50) {
                     element.innerHTML += text.substring(i, closingIndex + 1);
                     i = closingIndex + 1;
                 } else {
-                    element.innerHTML += text.charAt(i);
+                    const char = text.charAt(i);
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'typing-char';
+                    span.style.animationDelay = (i * 0.03) + 's';
+                    element.appendChild(span);
                     i++;
                 }
                 setTimeout(type, speed);
@@ -392,6 +397,14 @@ function updateCursorEvents() {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
+    // ページフラッシュエフェクト
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const flash = document.createElement('div');
+        flash.className = 'page-flash';
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 1500);
+    }
+
     // カスタムカーソルの初期化
     if (window.matchMedia('(pointer: fine)').matches) {
         initCursor();
@@ -408,32 +421,39 @@ document.addEventListener('DOMContentLoaded', async function() {
     const mainCopy = firstSection.querySelector('.main-copy');
     const questionArea = firstSection.querySelector('.question-area');
 
-    // メインビジュアルをフェードイン
-    mainVisual.style.opacity = '0';
-    mainVisual.style.transform = 'translateY(50px) scale(0.95)';
-    setTimeout(() => {
-        mainVisual.style.opacity = '1';
-        mainVisual.style.transform = 'translateY(0) scale(1)';
-        mainVisual.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    }, 200);
+    // メインビジュアルは自動アニメーション（CSS側で処理）
 
     // タイピングアニメーション実行
     setTimeout(async () => {
         const copyLine1 = mainCopy.querySelector('.copy-line1');
         const copyLine2 = mainCopy.querySelector('.copy-line2');
 
-        await typeWriter(copyLine1, copyLine1.dataset.text, 60);
-        await typeWriter(copyLine2, copyLine2.dataset.text, 60);
+        await typeWriter(copyLine1, copyLine1.dataset.text, 40);
+        await typeWriter(copyLine2, copyLine2.dataset.text, 40);
 
-        // 質問エリアをフェードイン
+        // 質問エリアを劇的に登場
         questionArea.style.opacity = '0';
-        questionArea.style.transform = 'translateY(50px) scale(0.95)';
+        questionArea.style.transform = 'translateY(80px) scale(0.8)';
+        questionArea.style.filter = 'blur(10px)';
         setTimeout(() => {
             questionArea.style.opacity = '1';
             questionArea.style.transform = 'translateY(0) scale(1)';
-            questionArea.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        }, 100);
-    }, 800);
+            questionArea.style.filter = 'blur(0px)';
+            questionArea.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+            // ボタンを個別に弾ませる
+            const buttons = questionArea.querySelectorAll('.option-button');
+            buttons.forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(50px) scale(0.5) rotate(-10deg)';
+                setTimeout(() => {
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                    btn.style.transition = 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                }, 100 + index * 150);
+            });
+        }, 200);
+    }, 1200);
     
     // ボタンのマイクロインタラクション（マグネティック効果強化）
     const buttons = document.querySelectorAll('.option-button');
