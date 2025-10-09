@@ -450,6 +450,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     btn.style.opacity = '1';
                     btn.style.transform = 'translateY(0) scale(1) rotate(0deg)';
                     btn.style.transition = 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+                    // アニメーション完了後、inline styleをクリア
+                    setTimeout(() => {
+                        btn.style.opacity = '';
+                        btn.style.transform = '';
+                        btn.style.transition = '';
+                    }, 700);
                 }, 100 + index * 150);
             });
         }, 200);
