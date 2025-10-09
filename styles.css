@@ -764,7 +764,8 @@ body::after {
         rgba(252, 224, 229, 0.3) 0%,
         rgba(245, 179, 192, 0.2) 30%,
         transparent 60%);
-    animation: questionAreaPulse 4s ease-in-out infinite;
+    animation: questionAreaPulse 4s ease-in-out 3s infinite;
+    /* 3s遅延 = タイピングアニメーション完了後に開始 */
     pointer-events: none;
     transform: translate(-50%, -50%);
     z-index: 0;
@@ -805,7 +806,8 @@ body::after {
 #section1 .question-title {
     font-weight: 400;
     position: relative;
-    animation: subtleGlow 3s ease-in-out infinite;
+    animation: subtleGlow 3s ease-in-out 3s infinite;
+    /* 3s遅延 = タイピングアニメーション完了後に開始 */
 }
 
 /* 控えめな光のパルス（質問文自体は動かさない） */
