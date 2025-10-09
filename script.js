@@ -48,7 +48,7 @@ function addCheckmark(button) {
     button.appendChild(checkmark);
 }
 
-// サクセスパーティクルを生成する関数（軽量実装）
+// サクセスパーティクルを生成する関数（強化版）
 function createSuccessParticles(button, event) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         return;
@@ -58,13 +58,13 @@ function createSuccessParticles(button, event) {
     const centerX = event.clientX;
     const centerY = event.clientY;
 
-    // 軽量化のため6個のパーティクルのみ
-    for (let i = 0; i < 6; i++) {
+    // 12個のパーティクルで派手に
+    for (let i = 0; i < 12; i++) {
         const particle = document.createElement('div');
         particle.className = 'success-particle';
 
-        const angle = (i * 60) * Math.PI / 180;
-        const distance = 60 + Math.random() * 40;
+        const angle = (i * 30) * Math.PI / 180;
+        const distance = 80 + Math.random() * 60;
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
 
@@ -73,9 +73,12 @@ function createSuccessParticles(button, event) {
         particle.style.setProperty('--tx', tx + 'px');
         particle.style.setProperty('--ty', ty + 'px');
 
+        // ランダムな遅延でより動的に
+        particle.style.animationDelay = (Math.random() * 0.1) + 's';
+
         button.appendChild(particle);
 
-        setTimeout(() => particle.remove(), 1000);
+        setTimeout(() => particle.remove(), 1100);
     }
 }
 

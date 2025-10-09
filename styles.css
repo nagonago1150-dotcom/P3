@@ -937,107 +937,124 @@ body::after {
     }
 }
 
-/* 選択されたボタンのキラキラエフェクト */
+/* 選択されたボタンのキラキラエフェクト（強化版） */
 .selected {
-    animation: selectedGlow 0.8s ease-out;
-    background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent-color) 50%, var(--accent-dark) 100%) !important;
+    animation: selectedGlow 1s ease-out, selectedPulse 2s ease-in-out infinite;
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 50%, #81C784 100%) !important;
     color: #fff !important;
     box-shadow:
-        0 12px 40px rgba(245, 179, 192, 0.4),
+        0 12px 40px rgba(76, 175, 80, 0.6),
         inset 0 0 0 1px rgba(255, 255, 255, 0.9),
-        inset 0 0 60px rgba(255, 255, 255, 0.3),
-        0 0 100px rgba(252, 224, 229, 0.5) !important;
+        inset 0 0 60px rgba(255, 255, 255, 0.4),
+        0 0 120px rgba(76, 175, 80, 0.8) !important;
 }
 
 @keyframes selectedGlow {
     0% {
-        box-shadow: 0 0 0 0 rgba(252, 224, 229, 0.8);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 1);
+    }
+    50% {
+        box-shadow: 0 0 0 30px rgba(76, 175, 80, 0.4);
     }
     100% {
-        box-shadow: 0 0 0 40px rgba(252, 224, 229, 0);
+        box-shadow: 0 0 0 60px rgba(76, 175, 80, 0);
     }
 }
 
-/* チェックマークスタイル（軽量実装） */
+@keyframes selectedPulse {
+    0%, 100% {
+        box-shadow:
+            0 12px 40px rgba(76, 175, 80, 0.6),
+            0 0 120px rgba(76, 175, 80, 0.8);
+    }
+    50% {
+        box-shadow:
+            0 12px 50px rgba(76, 175, 80, 0.8),
+            0 0 150px rgba(76, 175, 80, 1);
+    }
+}
+
+/* チェックマークスタイル（強化版） */
 .success-checkmark {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
     z-index: 10;
-    animation: checkmarkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: checkmarkBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.8));
 }
 
 .success-checkmark svg {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .checkmark-circle {
     stroke: #4CAF50;
-    stroke-width: 2;
+    stroke-width: 3;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
-    animation: checkmarkCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    animation: checkmarkCircle 0.7s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.6));
 }
 
 .checkmark-check {
-    stroke: #4CAF50;
-    stroke-width: 3;
+    stroke: #fff;
+    stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
-    animation: checkmarkCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+    animation: checkmarkCheck 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
 
 @keyframes checkmarkBounce {
     0% {
-        transform: scale(0) rotate(0deg);
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
         opacity: 0;
     }
     50% {
-        transform: scale(1.2) rotate(180deg);
+        transform: translate(-50%, -50%) scale(1.3) rotate(180deg);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(270deg);
     }
     100% {
-        transform: scale(1) rotate(360deg);
+        transform: translate(-50%, -50%) scale(1) rotate(360deg);
         opacity: 1;
     }
 }
 
-@keyframes checkmarkCircle {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes checkmarkCheck {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-/* サクセスパーティクル（軽量実装） */
+/* サクセスパーティクル（強化版） */
 .success-particle {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, #4CAF50, #81C784);
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle, #fff, #4CAF50, #2E7D32);
     border-radius: 50%;
     pointer-events: none;
-    animation: particleFloat 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.8);
+    animation: particleFloat 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    box-shadow:
+        0 0 15px rgba(76, 175, 80, 1),
+        0 0 30px rgba(76, 175, 80, 0.6),
+        inset 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 @keyframes particleFloat {
     0% {
-        transform: translate(0, 0) scale(1);
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(calc(var(--tx) * 0.5), calc(var(--ty) * 0.5)) scale(1.2) rotate(180deg);
         opacity: 1;
     }
     100% {
-        transform: translate(var(--tx), var(--ty)) scale(0);
+        transform: translate(var(--tx), var(--ty)) scale(0) rotate(360deg);
         opacity: 0;
     }
 }
