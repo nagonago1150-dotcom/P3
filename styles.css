@@ -806,8 +806,8 @@ body::after {
 #section1 .question-title {
     font-weight: 400;
     position: relative;
-    animation: subtleGlow 3s ease-in-out 3s infinite;
-    /* 3s遅延 = タイピングアニメーション完了後に開始 */
+    opacity: 0;
+    /* タイピングアニメーション用に初期非表示 */
 }
 
 /* 控えめな光のパルス（質問文自体は動かさない） */

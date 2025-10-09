@@ -439,24 +439,32 @@ document.addEventListener('DOMContentLoaded', async function() {
             questionArea.style.transform = 'translateY(0)';
             questionArea.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
 
-            // ボタンを個別に弾ませる
-            const buttons = questionArea.querySelectorAll('.option-button');
-            buttons.forEach((btn, index) => {
-                btn.style.opacity = '0';
-                btn.style.transform = 'translateY(50px) scale(0.5) rotate(-10deg)';
-                setTimeout(() => {
-                    btn.style.opacity = '1';
-                    btn.style.transform = 'translateY(0) scale(1) rotate(0deg)';
-                    btn.style.transition = 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            // 質問文にタイピングアニメーション
+            const questionTitle = questionArea.querySelector('.question-title');
+            setTimeout(async () => {
+                if (questionTitle && questionTitle.dataset.text) {
+                    await typeWriter(questionTitle, questionTitle.dataset.text, 50);
+                }
 
-                    // アニメーション完了後、inline styleをクリア
+                // ボタンを個別に弾ませる
+                const buttons = questionArea.querySelectorAll('.option-button');
+                buttons.forEach((btn, index) => {
+                    btn.style.opacity = '0';
+                    btn.style.transform = 'translateY(50px) scale(0.5) rotate(-10deg)';
                     setTimeout(() => {
-                        btn.style.opacity = '';
-                        btn.style.transform = '';
-                        btn.style.transition = '';
-                    }, 700);
-                }, 100 + index * 150);
-            });
+                        btn.style.opacity = '1';
+                        btn.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                        btn.style.transition = 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+                        // アニメーション完了後、inline styleをクリア
+                        setTimeout(() => {
+                            btn.style.opacity = '';
+                            btn.style.transform = '';
+                            btn.style.transition = '';
+                        }, 700);
+                    }, 100 + index * 150);
+                });
+            }, 300);
         }, 400);
     }, 1200);
     
