@@ -2,6 +2,105 @@ let currentQuestion = 1;
 const answers = {};
 const redirectUrl = 'https://pthree.jp/lp?u=media8';
 
+// タイピングアニメーション関数（軽量実装）
+function typeWriter(element, text, speed = 50) {
+    // prefers-reduced-motionチェック
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        element.innerHTML = text;
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+        let i = 0;
+        element.innerHTML = '';
+        element.style.opacity = '1';
+
+        function type() {
+            if (i < text.length) {
+                if (text.charAt(i) === '<') {
+                    // HTMLタグをそのまま処理
+                    const closingIndex = text.indexOf('>', i);
+                    element.innerHTML += text.substring(i, closingIndex + 1);
+                    i = closingIndex + 1;
+                } else {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                }
+                setTimeout(type, speed);
+            } else {
+                resolve();
+            }
+        }
+        type();
+    });
+}
+
+// チェックマークを追加する関数（軽量実装）
+function addCheckmark(button) {
+    const checkmark = document.createElement('div');
+    checkmark.className = 'success-checkmark';
+    checkmark.innerHTML = `
+        <svg viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+    `;
+    button.appendChild(checkmark);
+}
+
+// サクセスパーティクルを生成する関数（軽量実装）
+function createSuccessParticles(button, event) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    const rect = button.getBoundingClientRect();
+    const centerX = event.clientX;
+    const centerY = event.clientY;
+
+    // 軽量化のため6個のパーティクルのみ
+    for (let i = 0; i < 6; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'success-particle';
+
+        const angle = (i * 60) * Math.PI / 180;
+        const distance = 60 + Math.random() * 40;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+
+        particle.style.left = (centerX - rect.left) + 'px';
+        particle.style.top = (centerY - rect.top) + 'px';
+        particle.style.setProperty('--tx', tx + 'px');
+        particle.style.setProperty('--ty', ty + 'px');
+
+        button.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 1000);
+    }
+}
+
+// パーセント表示のカウントアップアニメーション（軽量実装）
+function animatePercent(element, targetPercent) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        element.textContent = targetPercent + '%';
+        return;
+    }
+
+    let current = 0;
+    const increment = targetPercent / 30;
+    const duration = 800;
+    const stepTime = duration / 30;
+
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= targetPercent) {
+            current = targetPercent;
+            clearInterval(timer);
+        }
+        element.textContent = Math.round(current) + '%';
+    }, stepTime);
+}
+
 // カスタムカーソルの初期化
 function initCursor() {
     const cursor = document.createElement('div');
@@ -69,10 +168,10 @@ function initCursor() {
 
 function selectAnswer(questionNumber, answer) {
     answers[`question${questionNumber}`] = answer;
-    
+
     const button = event.target.closest('.option-button');
     const allButtons = button.parentElement.querySelectorAll('.option-button');
-    
+
     // 他のボタンをフェードアウト
     allButtons.forEach(btn => {
         if (btn !== button) {
@@ -82,29 +181,35 @@ function selectAnswer(questionNumber, answer) {
             btn.style.filter = 'none';
         }
     });
-    
+
     // 選択されたボタンにエフェクト
     button.classList.add('selected');
     button.style.background = 'var(--accent-gradient)';
     button.style.color = '#fff';
-    button.style.transform = 'translateY(-2px)';
+    button.style.transform = 'translateY(-2px) scale(1.02)';
     button.style.boxShadow = '0 8px 20px rgba(245, 179, 192, 0.3)';
-    
+
     // リップルエフェクトを追加
     createRipple(button, event);
-    
+
+    // チェックマークを追加
+    addCheckmark(button);
+
+    // サクセスパーティクルを生成
+    createSuccessParticles(button, event);
+
     // 振動フィードバック（対応デバイスのみ）
     if (navigator.vibrate) {
-        navigator.vibrate(50);
+        navigator.vibrate([30, 10, 30]);
     }
-    
+
     setTimeout(() => {
         if (questionNumber < 3) {
             showNextQuestion();
         } else {
             showLoading();
         }
-    }, 800);
+    }, 1000);
 }
 
 function createRipple(button, event) {
@@ -146,24 +251,34 @@ function showNextQuestion() {
         
         // プログレスバーのアニメーション
         const progressFill = nextSection.querySelector('.progress-fill');
+        const progressPercent = nextSection.querySelector('.progress-percent');
         if (progressFill) {
             progressFill.style.width = '0%';
             setTimeout(() => {
-                progressFill.style.width = currentQuestion === 2 ? '66.67%' : '100%';
+                const targetWidth = currentQuestion === 2 ? '66.67%' : '100%';
+                const targetPercent = currentQuestion === 2 ? 67 : 100;
+                progressFill.style.width = targetWidth;
+
+                // パーセント表示をカウントアップ
+                if (progressPercent) {
+                    setTimeout(() => {
+                        animatePercent(progressPercent, targetPercent);
+                    }, 400);
+                }
             }, 200);
         }
         
         nextSection.classList.add('active');
-        
-        // 新しいセクションのコンテナをフェードイン
+
+        // 新しいセクションのコンテナを3D効果でフェードイン
         const newContainer = nextSection.querySelector('.container');
-        newContainer.style.transform = 'translateX(20px)';
+        newContainer.style.transform = 'translateX(50px) translateZ(-200px) rotateY(15deg)';
         newContainer.style.opacity = '0';
-        
+
         setTimeout(() => {
-            newContainer.style.transform = 'translateX(0)';
+            newContainer.style.transform = 'translateX(0) translateZ(0) rotateY(0deg)';
             newContainer.style.opacity = '1';
-            newContainer.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            newContainer.style.transition = 'all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         }, 100);
         
         // ボタンのスタガーアニメーション
@@ -196,12 +311,12 @@ function addQuestionNumber(section, number) {
 function showLoading() {
     const currentSection = document.querySelector('.section.active');
     currentSection.classList.add('fade-out');
-    
+
     setTimeout(() => {
         currentSection.classList.remove('active', 'fade-out');
         const loadingSection = document.getElementById('loading-section');
         loadingSection.classList.add('active');
-        
+
         // ローディングテキストの段階的表示
         const elements = loadingSection.querySelectorAll('.thank-you, .leading-text, .loading-text');
         elements.forEach((el, index) => {
@@ -213,13 +328,34 @@ function showLoading() {
                 el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             }, 200 + index * 400);
         });
-        
+
         // 波紋アニメーションの強化
         const ripples = loadingSection.querySelectorAll('.ripple');
         ripples.forEach((ripple, index) => {
             ripple.style.animationDelay = index * 1.5 + 's';
         });
-        
+
+        // プログレスバーアニメーション
+        const progressFill = loadingSection.querySelector('.loading-progress-fill');
+        const progressPercent = loadingSection.querySelector('.loading-progress-percent');
+
+        setTimeout(() => {
+            let progress = 0;
+            const duration = 2500;
+            const interval = 30;
+            const increment = 100 / (duration / interval);
+
+            const progressTimer = setInterval(() => {
+                progress += increment;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressTimer);
+                }
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = Math.round(progress) + '%';
+            }, interval);
+        }, 1200);
+
         // リダイレクト
         setTimeout(() => {
             // フェードトゥホワイト
@@ -236,14 +372,14 @@ function showLoading() {
                 transition: opacity 1s ease;
             `;
             document.body.appendChild(fadeOverlay);
-            
+
             setTimeout(() => {
                 fadeOverlay.style.opacity = '1';
                 setTimeout(() => {
                     window.location.href = redirectUrl;
                 }, 1000);
             }, 100);
-        }, 3000);
+        }, 4000);
     }, 600);
 }
 
@@ -252,46 +388,83 @@ function updateCursorEvents() {
     // この関数は不要になりました
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // カスタムカーソルの初期化
     if (window.matchMedia('(pointer: fine)').matches) {
         initCursor();
     } else {
         document.body.style.cursor = 'auto';
     }
-    
+
     // 最初の質問番号を追加
     const firstSection = document.querySelector('.section.active');
     addQuestionNumber(firstSection, 1);
-    
+
     // 初期アニメーション
-    const elements = firstSection.querySelectorAll('.main-visual, .main-copy, .question-area');
-    elements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(50px) scale(0.95)';
+    const mainVisual = firstSection.querySelector('.main-visual');
+    const mainCopy = firstSection.querySelector('.main-copy');
+    const questionArea = firstSection.querySelector('.question-area');
+
+    // メインビジュアルをフェードイン
+    mainVisual.style.opacity = '0';
+    mainVisual.style.transform = 'translateY(50px) scale(0.95)';
+    setTimeout(() => {
+        mainVisual.style.opacity = '1';
+        mainVisual.style.transform = 'translateY(0) scale(1)';
+        mainVisual.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    }, 200);
+
+    // タイピングアニメーション実行
+    setTimeout(async () => {
+        const copyLine1 = mainCopy.querySelector('.copy-line1');
+        const copyLine2 = mainCopy.querySelector('.copy-line2');
+
+        await typeWriter(copyLine1, copyLine1.dataset.text, 60);
+        await typeWriter(copyLine2, copyLine2.dataset.text, 60);
+
+        // 質問エリアをフェードイン
+        questionArea.style.opacity = '0';
+        questionArea.style.transform = 'translateY(50px) scale(0.95)';
         setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0) scale(1)';
-            el.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        }, 200 + index * 300);
-    });
+            questionArea.style.opacity = '1';
+            questionArea.style.transform = 'translateY(0) scale(1)';
+            questionArea.style.transition = 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        }, 100);
+    }, 800);
     
-    // ボタンのマイクロインタラクション
+    // ボタンのマイクロインタラクション（マグネティック効果強化）
     const buttons = document.querySelectorAll('.option-button');
     buttons.forEach(button => {
-        // マウスの動きに反応する微細な動き
+        // マグネティック効果（カーソルに引き寄せられる動き）
         button.addEventListener('mousemove', function(e) {
             if (!this.classList.contains('selected')) {
                 const rect = this.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-                const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-                this.style.transform = `translateY(-3px) translateX(${x}px)`;
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                // カーソルとボタン中心の距離を計算
+                const deltaX = (e.clientX - centerX) * 0.15;
+                const deltaY = (e.clientY - centerY) * 0.15;
+
+                // 3D的な傾きを追加
+                const rotateX = ((e.clientY - centerY) / rect.height) * -5;
+                const rotateY = ((e.clientX - centerX) / rect.width) * 5;
+
+                this.style.transform = `
+                    translateY(-3px)
+                    translateX(${deltaX}px)
+                    translateZ(0)
+                    rotateX(${rotateX}deg)
+                    rotateY(${rotateY}deg)
+                `;
+                this.style.transition = 'transform 0.1s ease-out';
             }
         });
-        
+
         button.addEventListener('mouseleave', function() {
             if (!this.classList.contains('selected')) {
-                this.style.transform = 'translateY(0) translateX(0)';
+                this.style.transform = 'translateY(0) translateX(0) rotateX(0) rotateY(0)';
+                this.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             }
         });
     });
