@@ -431,15 +431,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         await typeWriter(copyLine1, copyLine1.dataset.text, 40);
         await typeWriter(copyLine2, copyLine2.dataset.text, 40);
 
-        // 質問エリアを劇的に登場
+        // 質問エリアをダイナミックに「ドンッ」と落とす
         questionArea.style.opacity = '0';
-        questionArea.style.transform = 'translateY(80px) scale(0.8)';
-        questionArea.style.filter = 'blur(10px)';
+        questionArea.style.transform = 'translateY(-60px)';
         setTimeout(() => {
             questionArea.style.opacity = '1';
-            questionArea.style.transform = 'translateY(0) scale(1)';
-            questionArea.style.filter = 'blur(0px)';
-            questionArea.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            questionArea.style.transform = 'translateY(0)';
+            questionArea.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
 
             // ボタンを個別に弾ませる
             const buttons = questionArea.querySelectorAll('.option-button');
@@ -459,7 +457,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }, 700);
                 }, 100 + index * 150);
             });
-        }, 200);
+        }, 400);
     }, 1200);
     
     // ボタンのマイクロインタラクション（マグネティック効果強化）
