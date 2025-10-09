@@ -456,12 +456,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                         btn.style.transform = 'translateY(0) scale(1) rotate(0deg)';
                         btn.style.transition = 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
 
-                        // アニメーション完了後、inline styleをクリア
+                        // アニメーション完了後、inline styleを完全にクリア
                         setTimeout(() => {
-                            btn.style.opacity = '';
-                            btn.style.transform = '';
-                            btn.style.transition = '';
-                        }, 700);
+                            btn.style.cssText = '';
+                        }, 750);
                     }, 100 + index * 150);
                 });
             }, 300);
