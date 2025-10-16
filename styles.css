@@ -921,6 +921,7 @@ body::after {
 .option-label {
     position: relative;
     z-index: 1;
+    white-space: nowrap;
 }
 
 /* ローディング画面 */
