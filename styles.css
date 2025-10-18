@@ -1320,6 +1320,10 @@ body::after {
     #section3 .question-title {
         transform: scale(0.94);
         letter-spacing: 0.03em;
+        text-align: center;
+        margin: 0 auto 30px auto;
+        display: block;
+        width: 100%;
     }
 
     #section2 .question-title {
