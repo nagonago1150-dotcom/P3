@@ -515,23 +515,23 @@ body::after {
 
 .copy-annotation {
     font-size: 11px;
-    color: #999;
-    font-weight: 300;
+    color: #666;
+    font-weight: 400;
     letter-spacing: 0.02em;
     margin-top: 8px;
     margin-bottom: 0;
-    opacity: 0.7;
+    opacity: 1;
     text-align: center;
 }
 
 .section-annotation {
     font-size: 11px;
-    color: #999;
-    font-weight: 300;
+    color: #666;
+    font-weight: 400;
     letter-spacing: 0.02em;
     margin-top: 20px;
     margin-bottom: 0;
-    opacity: 0.7;
+    opacity: 1;
     text-align: center;
 }
 
